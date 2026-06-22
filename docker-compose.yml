@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: fininfra_project1_db
+    environment:
+      POSTGRES_USER: fininfra
+      POSTGRES_PASSWORD: fininfra
+      POSTGRES_DB: fininfra
+    ports:
+      - "55432:5432"
+    volumes:
+      - fininfra_project1_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fininfra -d fininfra"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build: .
+    container_name: fininfra_project1_api
+    environment:
+      SERVICE_NAME: fininfra-double-entry-ledger
+      DATABASE_URL: postgresql://fininfra:fininfra@db:5432/fininfra
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  fininfra_project1_pgdata:
