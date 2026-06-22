@@ -1,0 +1,19 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.env
+*.pyc
+.DS_Store
+__MACOSX/
+
+# Local runtime / release hygiene
+venv/
+.mypy_cache/
+.ruff_cache/
+*.py[cod]
+audit/
+P1_PRE_RELEASE_AUDIT*/
+P1_CLEAN_RELEASE_AUDIT*/
+*.zip
+*.tar
+*.tar.gz
