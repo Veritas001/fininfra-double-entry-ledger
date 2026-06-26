@@ -1,5 +1,8 @@
+from pathlib import Path
+
 from fastapi import FastAPI
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.config import DATABASE_URL, SERVICE_NAME
 from app.health import basic_health_check, project_identity
@@ -13,10 +16,20 @@ app = FastAPI(
 
 app.include_router(ledger_router)
 
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+FRONTEND_DIR = PROJECT_ROOT / "frontend"
+if FRONTEND_DIR.exists():
+    app.mount("/frontend", StaticFiles(directory=FRONTEND_DIR), name="frontend")
+
 
 @app.get("/")
 def root() -> dict:
     return project_identity()
+
+
+@app.get("/dashboard")
+def dashboard() -> FileResponse:
+    return FileResponse(FRONTEND_DIR / "index.html")
 
 
 @app.get("/health")

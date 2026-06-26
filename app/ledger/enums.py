@@ -22,6 +22,7 @@ class AccountStatus(StrEnum):
 
 class TransactionType(StrEnum):
     TRANSFER = "TRANSFER"
+    JOURNAL_ENTRY = "JOURNAL_ENTRY"
 
 
 class TransactionStatus(StrEnum):

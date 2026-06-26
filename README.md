@@ -24,6 +24,9 @@ The repository intentionally stops at the ledger boundary. It demonstrates caref
 - Canonical request hashing for duplicate request detection
 - PostgreSQL-backed transactional posting
 - Deterministic balance-row locking during transfers
+- Browser-based Ledger Control Room dashboard
+- Ledger summary, accounts, journal entries, and trial balance read models
+- Deterministic settlement-style demo replay
 - Tests for correctness, validation, idempotency, rollback, readiness, and immutability behavior
 
 ## What P1 Does Not Implement
@@ -66,17 +69,29 @@ fininfra-double-entry-ledger/
 │   ├── operator_manual.md
 │   └── status/
 │       └── P1_LEDGER.md
+├── frontend/
+│   ├── app.js
+│   ├── index.html
+│   ├── package.json
+│   ├── styles.css
+│   └── scripts/
+│       └── check-static.mjs
 ├── migrations/
 │   ├── 001_p1_double_entry_ledger.sql
-│   └── 002_drop_transaction_external_ref_unique.sql
+│   ├── 002_drop_transaction_external_ref_unique.sql
+│   └── 003_add_journal_entry_transaction_type.sql
 ├── scripts/
 │   ├── demo_p1_flow.sh
 │   ├── run_migrations.py
 │   └── seed_demo_data.py
 ├── tests/
 │   ├── test_demo_artifacts.py
+│   ├── test_control_room.py
 │   ├── test_health.py
 │   └── test_ledger.py
+├── AUDIT_REPORT_20260623.md
+├── DEMO_WALKTHROUGH.md
+├── PROJECT_STATUS.md
 ├── docker-compose.yml
 ├── Dockerfile
 ├── pytest.ini
@@ -101,10 +116,19 @@ P1 ledger endpoints are under `/api/v1`:
 - `GET /api/v1/transactions/{transaction_id}`
 - `GET /api/v1/ledger-entries`
 
+Ledger Control Room read-model and demo endpoints:
+
+- `GET /api/v1/ledger/summary`
+- `GET /api/v1/ledger/accounts`
+- `GET /api/v1/ledger/journal-entries`
+- `GET /api/v1/ledger/trial-balance`
+- `POST /api/v1/ledger/demo/reset`
+- `POST /api/v1/ledger/demo/replay-settlement`
+
 ### Create Account
 
 ```bash
-curl -X POST http://localhost:8000/api/v1/accounts \
+curl -X POST http://127.0.0.1:8011/api/v1/accounts \
   -H "Content-Type: application/json" \
   -d '{
     "account_code": "cash-usd",
@@ -119,7 +143,7 @@ curl -X POST http://localhost:8000/api/v1/accounts \
 ### Post Transfer
 
 ```bash
-curl -X POST http://localhost:8000/api/v1/transfers \
+curl -X POST http://127.0.0.1:8011/api/v1/transfers \
   -H "Content-Type: application/json" \
   -H "Idempotency-Key: demo-transfer-001" \
   -d '{
@@ -196,11 +220,14 @@ uvicorn app.main:app --reload
 Then open:
 
 ```text
-http://localhost:8000/
-http://localhost:8000/health
-http://localhost:8000/ready
-http://localhost:8000/docs
+http://127.0.0.1:8011/
+http://127.0.0.1:8011/dashboard
+http://127.0.0.1:8011/health
+http://127.0.0.1:8011/ready
+http://127.0.0.1:8011/docs
 ```
+
+The root `/` remains the project identity endpoint. The browser dashboard is served at `/dashboard`.
 
 ## Demo / Operator Walkthrough
 
@@ -208,6 +235,7 @@ For reviewers who want to understand what the ledger does, see:
 
 - `docs/demo_playbook.md`
 - `docs/operator_manual.md`
+- `DEMO_WALKTHROUGH.md`
 
 After starting the service locally, run:
 
@@ -216,6 +244,22 @@ bash scripts/demo_p1_flow.sh
 ```
 
 The demo creates ledger accounts, seeds a local demo opening balance through balanced ledger posting, posts a transfer, validates idempotency behavior, lists ledger entries, and shows how failed requests avoid partial ledger mutation.
+
+For the browser demo, open:
+
+```text
+http://127.0.0.1:8011/dashboard
+```
+
+Click `Reset Demo Ledger`, then `Replay Settlement Demo`. The expected deterministic settlement replay posts:
+
+- Total Debits = `20005`
+- Total Credits = `20005`
+- Difference = `0`
+- Ledger Balanced = `TRUE`
+- Settlement Cash ending debit balance = `5`
+- Seller Payable ending balance = `0`
+- Clearing Fee Revenue ending credit balance = `5`
 
 ## Run with Docker
 
@@ -241,6 +285,25 @@ Ledger API calls also ensure the schema exists before executing P1 operations, b
 ```
 
 The test suite covers health/readiness behavior and P1 ledger correctness, idempotency, validation, rollback, balance projection, and immutability behavior.
+
+## Frontend Static Checks
+
+The control room is dependency-free static HTML, CSS, and JavaScript. It has lightweight static checks:
+
+```bash
+cd frontend
+npm run build
+npm run lint
+```
+
+## Limitations
+
+- P1 is not a bank production general ledger.
+- P1 is not a trading system, broker, market data pipeline, payment network, or clearing system.
+- The transfer API remains scoped to cash-style transfers between `ASSET` accounts with `DEBIT` normal balance.
+- The control-room settlement replay is a deterministic local demo utility. It resets local demo ledger state and is not a production workflow.
+- Generic multi-account journal entry APIs are not exposed as public production-style endpoints.
+- The trial balance and dashboard are review tools for prototype ledger integrity, not regulated reporting.
 
 ## Non-Production Disclaimer
 

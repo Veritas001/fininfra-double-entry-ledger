@@ -30,7 +30,7 @@ The posted transaction is valid only when total debits equal total credits. That
 
 ## Demo Storyline
 
-The demo simulates a local cash-style transfer flow:
+The shell demo simulates a local cash-style transfer flow:
 
 1. Check that the API is running with `/health`.
 2. Check that PostgreSQL is reachable with `/ready`.
@@ -45,6 +45,16 @@ The demo simulates a local cash-style transfer flow:
 11. Query the transaction, balances, and ledger entries.
 12. Attempt an invalid same-account transfer.
 13. Verify the rejected request does not create ledger entries.
+
+The browser Ledger Control Room adds a deterministic settlement-style replay:
+
+1. Reset the local demo ledger.
+2. Replay buyer-funds collection and seller-payment journal entries.
+3. Verify `Total Debits = 20005`.
+4. Verify `Total Credits = 20005`.
+5. Verify `Difference = 0`.
+6. Verify the trial balance rows for Settlement Cash, Seller Payable, and Clearing Fee Revenue.
+7. Replay again and confirm the final state is unchanged.
 
 ## What Each Step Proves
 

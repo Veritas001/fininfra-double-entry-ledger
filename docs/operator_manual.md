@@ -52,18 +52,21 @@ uvicorn app.main:app --reload
 By default, the service is available at:
 
 ```text
-http://localhost:8000
+http://127.0.0.1:8011
 ```
 
 ## Open Health, Readiness, and API Docs
 
 ```text
-http://localhost:8000/health
-http://localhost:8000/ready
-http://localhost:8000/docs
+http://127.0.0.1:8011/health
+http://127.0.0.1:8011/ready
+http://127.0.0.1:8011/docs
+http://127.0.0.1:8011/dashboard
 ```
 
 `/health` checks the API process. `/ready` checks database connectivity and returns HTTP 503 when PostgreSQL is unavailable.
+
+`/dashboard` opens the Project 1 - Double-Entry Ledger Control Room. It shows service health, database readiness, ledger summary, accounts, journal entries, trial balance, and deterministic settlement replay controls.
 
 ## Run Tests
 
@@ -92,6 +95,22 @@ API_BASE_URL=http://localhost:8001 bash scripts/demo_p1_flow.sh
 ```
 
 The demo creates accounts, seeds a local source balance through the ledger service, posts a transfer, replays the same transfer idempotently, lists ledger entries, checks balances, and demonstrates a rejected same-account transfer.
+
+## Run the Browser Control Room Demo
+
+After starting the backend, open:
+
+```text
+http://127.0.0.1:8011/dashboard
+```
+
+Use the controls in this order:
+
+1. `Reset Demo Ledger`
+2. `Replay Settlement Demo`
+3. `Replay Settlement Demo` again
+
+The second replay should leave the same final state, with no duplicated journal entries.
 
 ## Demo Seed Tool
 

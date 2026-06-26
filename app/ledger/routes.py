@@ -4,6 +4,7 @@ from uuid import UUID
 from fastapi import APIRouter, Header, Query
 from fastapi.responses import JSONResponse
 
+from app.ledger.control_room import ControlRoomService
 from app.ledger.schemas import (
     AccountBalanceResponse,
     AccountCreateRequest,
@@ -17,6 +18,7 @@ from app.ledger.service import LedgerBusinessError, LedgerService
 
 router = APIRouter(prefix="/api/v1", tags=["ledger"])
 service = LedgerService()
+control_room_service = ControlRoomService()
 
 
 @router.post("/accounts", response_model=AccountResponse, status_code=201)
@@ -82,3 +84,33 @@ def list_ledger_entries(
         limit=limit,
         offset=offset,
     )
+
+
+@router.get("/ledger/summary")
+def get_ledger_summary() -> dict:
+    return control_room_service.summary()
+
+
+@router.get("/ledger/accounts")
+def get_ledger_accounts() -> dict:
+    return {"accounts": control_room_service.accounts()}
+
+
+@router.get("/ledger/journal-entries")
+def get_journal_entries(limit: Annotated[int, Query(ge=1, le=100)] = 25) -> dict:
+    return {"journal_entries": control_room_service.journal_entries(limit=limit)}
+
+
+@router.get("/ledger/trial-balance")
+def get_trial_balance() -> dict:
+    return control_room_service.trial_balance()
+
+
+@router.post("/ledger/demo/reset")
+def reset_demo_ledger() -> dict:
+    return control_room_service.reset_demo()
+
+
+@router.post("/ledger/demo/replay-settlement")
+def replay_settlement_demo() -> dict:
+    return control_room_service.replay_settlement_demo()

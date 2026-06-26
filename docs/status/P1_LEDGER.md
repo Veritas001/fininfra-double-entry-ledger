@@ -2,7 +2,7 @@
 
 ## Status
 
-Implemented prototype. The test suite passes for the current ledger scope.
+Implemented prototype. v1.1 adds the Ledger Control Room dashboard and deterministic settlement demo replay.
 
 ## Role in FMI Lab
 
@@ -49,6 +49,9 @@ Those belong to later projects.
 - Double-entry transfer posting with one debit and one credit entry
 - Idempotency-key replay and conflict handling
 - Database trigger protection against ledger entry update/delete
+- Browser Ledger Control Room at `/dashboard`
+- Ledger summary, accounts, journal entries, and trial balance read models
+- Deterministic settlement replay proving `Total Debits = Total Credits`
 - Tests for success, rejection, validation, idempotency, rollback, balance projection, immutability, and readiness
 
 ## Prototype Boundary

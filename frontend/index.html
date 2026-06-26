@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Project 1 - Double-Entry Ledger Control Room</title>
+    <link rel="stylesheet" href="/frontend/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">FMI Lab Project 1</p>
+          <h1>Project 1 - Double-Entry Ledger Control Room</h1>
+          <p class="lede">
+            Accounting integrity dashboard for account balances, journal entries, trial balance, and deterministic settlement demo flows.
+          </p>
+        </div>
+        <div class="actions" aria-label="Dashboard controls">
+          <button id="refreshButton" type="button">Refresh</button>
+          <button id="resetButton" type="button">Reset Demo Ledger</button>
+          <button id="replayButton" type="button" class="primary">Replay Settlement Demo</button>
+        </div>
+      </header>
+
+      <section class="status-grid" aria-label="Ledger status cards">
+        <article class="metric">
+          <span class="label">Service status</span>
+          <strong id="serviceStatus">Loading</strong>
+        </article>
+        <article class="metric">
+          <span class="label">DB readiness</span>
+          <strong id="dbStatus">Loading</strong>
+        </article>
+        <article class="metric">
+          <span class="label">Accounts</span>
+          <strong id="accountCount">0</strong>
+        </article>
+        <article class="metric">
+          <span class="label">Journal entries</span>
+          <strong id="journalEntryCount">0</strong>
+        </article>
+        <article class="metric">
+          <span class="label">Total Debits</span>
+          <strong id="totalDebits">0</strong>
+        </article>
+        <article class="metric">
+          <span class="label">Total Credits</span>
+          <strong id="totalCredits">0</strong>
+        </article>
+        <article class="metric">
+          <span class="label">Difference</span>
+          <strong id="difference">0</strong>
+        </article>
+        <article class="metric">
+          <span class="label">Ledger balanced</span>
+          <strong id="balancedFlag">UNKNOWN</strong>
+        </article>
+      </section>
+
+      <section class="invariant-panel" aria-live="polite">
+        <div>
+          <span class="label">Invariant status</span>
+          <h2 id="invariantHeadline">Ledger Balanced: UNKNOWN</h2>
+        </div>
+        <p id="invariantDetail">Total Debits = Total Credits when the difference is zero.</p>
+        <p id="lastAction" class="last-action">Ready.</p>
+      </section>
+
+      <section class="content-grid">
+        <article class="panel wide">
+          <div class="panel-header">
+            <h2>Accounts and Balances</h2>
+            <span>Normal-side balance projection</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Name</th>
+                  <th>Type</th>
+                  <th>Normal side</th>
+                  <th>Debits</th>
+                  <th>Credits</th>
+                  <th>Ending balance</th>
+                </tr>
+              </thead>
+              <tbody id="accountsTable">
+                <tr><td colspan="7">No accounts loaded.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="panel wide">
+          <div class="panel-header">
+            <h2>Journal Entries</h2>
+            <span>Recent transaction postings</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Reference</th>
+                  <th>Description</th>
+                  <th>Status</th>
+                  <th>Posted at</th>
+                  <th>Postings</th>
+                </tr>
+              </thead>
+              <tbody id="journalEntriesTable">
+                <tr><td colspan="5">No journal entries loaded.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="panel wide">
+          <div class="panel-header">
+            <h2>Trial Balance</h2>
+            <span>Debit and credit ending balances by account</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Account</th>
+                  <th>Type</th>
+                  <th>Debit balance</th>
+                  <th>Credit balance</th>
+                </tr>
+              </thead>
+              <tbody id="trialBalanceTable">
+                <tr><td colspan="4">No trial balance loaded.</td></tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th colspan="2">Totals</th>
+                  <th id="trialDebitTotal">0</th>
+                  <th id="trialCreditTotal">0</th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </article>
+      </section>
+    </main>
+    <script src="/frontend/app.js" defer></script>
+  </body>
+</html>

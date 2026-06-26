@@ -1,0 +1,7 @@
+{
+  "scripts": {
+    "build": "node scripts/check-static.mjs",
+    "lint": "node scripts/check-static.mjs"
+  },
+  "devDependencies": {}
+}

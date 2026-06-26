@@ -14,8 +14,12 @@ This repository implements:
 4. Immutable ledger entries
 5. Idempotency records
 6. PostgreSQL transactional consistency
+7. Ledger Control Room read models and browser dashboard
+8. Deterministic local settlement demo replay
 
 Generic multi-account journal posting is not implemented in the P1 MVP. It is a possible future extension once the transfer ledger invariants are stable.
+
+The v1.1 control-room settlement replay posts fixed local demo journal entries for reviewer visibility. It is not a public production journal-entry API.
 
 ## Future Extensions
 
